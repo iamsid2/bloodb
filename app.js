@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var expressLayouts = require('express-ejs-layouts');
 var index = require('./routes/index');
 var users = require('./routes/users');
-
+var mongoose = require('mongoose');
 var app = express();
 
 // view engine setup
@@ -24,6 +24,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+// mongoose connection
+mongoose.connect('mongodb://localhost:27017/bloodb',{
+  useMongoClient: true
+});
+
+var db = mongoose.connection;
+db.once('open', function(){
+  console.log("connection to mongodb succesful..");
+}).on('error',function(error) {
+  console.log("MongoDB connection error: ", error);
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
